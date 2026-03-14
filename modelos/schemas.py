@@ -6,4 +6,4 @@ class RegisterRequest(BaseModel):
 
 
 class DeleteUser(BaseModel):
-    email: EmailStr
+    id : int

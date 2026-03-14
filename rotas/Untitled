@@ -1,8 +1,0 @@
-from fastapi import APIRouter, Depends
-from services.security import validar_token
-
-rotas = APIRouter(
-    prefix="/privado",
-    tags=["privado"],
-    dependencies=[Depends(validar_token)]  # 🔥 protege TODAS as rotas
-)

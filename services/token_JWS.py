@@ -1,9 +1,10 @@
+from typing_extensions import runtime
 from dotenv import load_dotenv
 from jose import jwt, JWTError
 from fastapi.security import HTTPBearer , HTTPAuthorizationCredentials
 from fastapi import Depends , HTTPException
 from datetime import datetime, timedelta, timezone
-from .auth import hash_senha , login
+from .auth import hash_senha, verifica_user 
 import os
 
 load_dotenv()
@@ -32,20 +33,8 @@ def gerar_token(user_id):
             algorithm= algoritmo  # pyright: ignore[reportArgumentType]
         )
         return token_pronto
-
-
-
-def valida_token(credenciais : HTTPAuthorizationCredentials = Depends(tira_header)):
-    token = credenciais.credentials
-
-    user_info = decodifica_token(token)
-
-    
-    if user_info is None:
-        raise HTTPException (401 , "Token inválido")
-        
-    return int(user_info)
-
+    else:
+        RuntimeError("JWT NÃO CONFIGURADO")
 
 
 
@@ -68,10 +57,22 @@ def decodifica_token(token):
         return None
 
 
+def valida_token(credenciais : HTTPAuthorizationCredentials = Depends(tira_header)):
+    token = credenciais.credentials
+    user_info_id = decodifica_token(token)
+
+    if user_info_id is None:
+        raise HTTPException (401 , "Token inválido")
+        
+    return int(user_info_id)
+
+
+
+
 if __name__ == "__main__":
     print("iniciando teste...")
     
-    user_data = login("raphaelcatanduba7115@gmail.com" , "1234")
+    user_data = verifica_user("raphaelcatanduba7115@gmail.com" , "1234")
 
     # print(user_data)
     if user_data:

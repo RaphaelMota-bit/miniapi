@@ -1,25 +1,25 @@
 import bcrypt
 from database.database import adicionar_user , buscar_usuarios , excluir_user
 
-def hash_senha(senha):
+def hash_senha(senha: str) -> bytes :
     return bcrypt.hashpw(senha.encode() , bcrypt.gensalt())
 
 
-def registrar_user(email , senha):
+def registrar_user(email: str , senha: str) -> bool:
         senha_hash = hash_senha(senha)
         return adicionar_user(email , senha_hash)
         
 
-def verifica_senha(senha ,senha_hash):
+def comparar_senha(senha: str ,senha_hash: bytes) -> bool:
     return bcrypt.checkpw(senha.encode() , senha_hash ) 
 
-def login(email , senha):
+def verifica_user(email: str , senha: str):
      user = buscar_usuarios(email)
      if not user:
-          return False
-     senha_hash = user[2]
+          return None
+     senha_hash : bytes = user[2]
      
-     if verifica_senha(senha, senha_hash):
+     if comparar_senha(senha, senha_hash):
           return {
                "id" : user[0],
                "email" : user[1] ,
@@ -29,8 +29,8 @@ def login(email , senha):
           return False
 
      
-def delete(email):
-     user_chato = excluir_user(email)
+def delete(id):
+     user_chato = excluir_user(id)
      if user_chato:
           return True
      else:
